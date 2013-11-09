@@ -1,0 +1,66 @@
+# Created by newuser for 4.3.15
+
+## Enviroment Setting
+export LANG=ja_JP.UTF-8
+export CLICOLOR=1
+
+export ARDUINO_DIR=/Applications/Arduino.app/Contents/Resources/Java
+export ARDMK_DIR=/usr/local
+
+## Alias Setting
+alias ll='ls -l'
+alias dh='df -h'
+
+## Resume Setting
+# auto resume when equal supending command
+setopt auto_resume
+
+## Complement Setting
+autoload -U compinit
+compinit
+# display complement at twice TAB
+#unsetopt auto_list
+# rotate item use TAB
+setopt auto_menu
+# select complement with corsor
+zstyle ':completion:*:default' menu select=1
+# close bitween complement
+setopt list_packed
+# display complement with color
+#eval `dircolors`
+#export ZLS_COLORS=$LS_COLORS
+#zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
+## Prompt Color Setting
+autoload colors
+colors
+case ${UID} in
+0)
+    PROMPT="%{${fg[red]}%}[%n@%m]%(!.#.$) %{${reset_color}%}"
+    RPROMPT="%{${fg[red]}%}[%~]%{${reset_color}%}"
+    PROMPT2="%{${fg[red]}%}%_> %{${reset_color}%}"
+    SPROMPT="%{${fg[red]}%}correct: %R -> %r [n,y,a,e]?%{${reset_color}%}"
+    [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] && 
+        PROMPT="%{${fg[red]}%}${HOST%%.*} ${PROMPT}"
+    ;;
+*)
+    PROMPT="%{${fg[blue]}%}[%n@%m]%(!.#.$) %{${reset_color}%}"
+    RPROMPT="%{${fg[blue]}%}[%~]%{${reset_color}%}"
+    PROMPT2="%{${fg[blue]}%}%_> %{${reset_color}%}"
+    SPROMPT="%{${fg[blue]}%}correct: %R -> %r [n,y,a,e]?%{${reset_color}%}"
+    [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] && 
+        PROMPT="%{${fg[green]}%}${HOST%%.*} ${PROMPT}"
+    ;;
+esac
+
+## History Setting
+# history file path
+HISTFILE=~/.zsh_history
+# load history on memory 
+HISTSIZE=1000000
+# save history count
+SAVEHIST=1000000
+# ignore dupulication command history list
+setopt hist_ignore_dups
+# share command history data
+setopt share_history

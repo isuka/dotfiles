@@ -1,0 +1,8 @@
+source .screen/defaults
+
+chdir
+split
+screen 0
+focus
+screen 1
+focus

@@ -1,0 +1,6 @@
+alias ll='ls -l'
+
+export CLICOLOR=1
+export LSCOLORS=DxGxcxdxCxegedabagacad
+export PATH=/opt/local/bin:/opt/local/sbin/:$PATH
+export MANPATH=/opt/local/man:$MANPATH
