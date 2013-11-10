@@ -1,0 +1,7 @@
+#
+# dotfile
+#
+setup.shを実行するとhomeにあるdotfile(シンボリックリンク除く)を
+~/.orgdotfilesにコピーしてdotfileへのシンボリックリンクを作成する。
+
+ファイルの実体は~/dotfilesに格納されている。
