@@ -24,3 +24,9 @@ alias ssh='ssh -o "StrictHostKeyChecking no"'
 # function setting
 #
 function cd() { pushd $1 $HOME > /dev/null; }
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
