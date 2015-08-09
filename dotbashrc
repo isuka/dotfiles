@@ -1,6 +1,26 @@
-alias ll='ls -l'
-
+#
+# export setting
+#
 export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export PATH=/opt/local/bin:/opt/local/sbin/:$PATH
 export MANPATH=/opt/local/man:$MANPATH
+
+## subversion commit
+export SVN_EDITOR=emacs
+
+## less source highlight
+export LESS='-R'
+export LESSOPEN='| /usr/local/bin/src-hilite-lesspipe.sh %s'
+
+#
+# alias setting
+#
+alias ll='ls -l'
+alias dh='df -h'
+alias ssh='ssh -o "StrictHostKeyChecking no"'
+
+#
+# function setting
+#
+function cd() { pushd $1 $HOME > /dev/null; }

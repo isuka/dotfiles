@@ -8,6 +8,127 @@ auto-mode-alist))
 ;;逆向きにウィンドウを移動させる
 (global-set-key "\C-xp" (lambda () (interactive) (other-window -1)))
 
+;; EmacsからSvnを利用可能にする
+(autoload 'svn-status "dsvn" "Run `svn status'." t)
+(autoload 'svn-update "dsvn" "Run `svn update'." t)
+
+; ;; diffの表示方法を変更
+; (defun diff-mode-setup-faces ()
+;   ;; 追加された行は緑で表示
+;   (set-face-attribute 'diff-added nil
+;                       :foreground "white" :background "dark green")
+;   ;; 削除された行は赤で表示
+; (set-face-attribute 'diff-removed nil
+;                       :foreground "white" :background "dark red")
+;   ;; 文字単位での変更箇所は色を反転して強調
+;   (set-face-attribute 'diff-refine-change nil
+;                      :foreground nil :background nil
+;                      :weight 'bold :inverse-video t))
+; (add-hook 'diff-mode-hook 'diff-mode-setup-faces)
+
+; ;; diffを表示したらすぐに文字単位での強調表示も行う
+; (defun diff-mode-refine-automatically ()
+;   (diff-auto-refine-mode t))
+; (add-hook 'diff-mode-hook 'diff-mode-refine-automatically)
+
+; ;; diff関連の設定
+; (defun magit-setup-diff ()
+;   ;; diffを表示しているときに文字単位での変更箇所も強調表示する
+;   ;; 'allではなくtにすると現在選択中のhunkのみ強調表示する
+;   (setq magit-diff-refine-hunk 'all)
+;   ;; diff用のfaceを設定する
+;   (diff-mode-setup-faces)
+;   ;; diffの表示設定が上書きされてしまうのでハイライトを無効にする
+;   (set-face-attribute 'magit-item-highlight nil :inherit nil))
+; (add-hook 'magit-mode-hook 'magit-setup-diff)
+
+;;(set-language-environment "Japanese")
+;;(set-terminal-coding-system 'utf-8)
+;;(set-keyboard-coding-system 'utf-8)
+
+;; 現在時刻の挿入
+(defun ctime()
+  (interactive)
+  (insert (format-time-string "[%Y-%02m-%02d %02H:%02M:%02S]")))
+(global-set-key "\C-ct" 'ctime)
+
+;; 本日の挿入
+(defun cdate()
+  (interactive)
+  (insert (format-time-string "[%Y-%02m-%02d(%a)]")))
+(global-set-key "\C-cd" 'cdate)
+
+;; changelogメモファイルの指定
+(defun memo()
+  (interactive)
+  (add-change-log-entry
+   nil
+   (expand-file-name "~/private/memo/log.txt"))
+   (insert (format-time-string "[%Y-%02m-%02d %02H:%02M:%02S] ")))
+;; C-x Mで新しいログを挿入する
+(define-key ctl-x-map "M" 'memo)
+
+;; 分割ウィンドウをfbnpでサイズ変更
+(defun window-resizer ()
+  "Control window size and position."
+  (interactive)
+  (let ((window-obj (selected-window))
+        (current-width (window-width))
+        (current-height (window-height))
+        (dx (if (= (nth 0 (window-edges)) 0) 1
+              -1))
+        (dy (if (= (nth 1 (window-edges)) 0) 1
+              -1))
+        c)
+    (catch 'end-flag
+      (while t
+        (message "size[%dx%d]"
+                 (window-width) (window-height))
+        (setq c (read-char))
+        (cond ((= c ?f)
+               (enlarge-window-horizontally dx))
+              ((= c ?b)
+               (shrink-window-horizontally dx))
+              ((= c ?n)
+               (enlarge-window dy))
+              ((= c ?p)
+               (shrink-window dy))
+              ;; otherwise
+              (t
+               (message "Quit")
+               (throw 'end-flag t)))))))
+
+;; 分割ウィンドウ移動C-qをプリフィックスキー化
+(define-key global-map "\C-q" (make-sparse-keymap))
+
+;; quoted-insertはC-q C-qへ割り当て(使用していないと思うのでコメントアウト)
+;; (global-set-key "\C-q\C-q" 'quoted-insert)
+
+;; C-q C-rでwindow-resizer呼び出し
+(global-set-key "\C-q\C-r" 'window-resizer)
+
+;; 分割ウィンドウを移動
+(global-set-key "\C-qf" 'windmove-right)
+(global-set-key "\C-qb" 'windmove-left)
+(global-set-key "\C-qn" 'windmove-down)
+(global-set-key "\C-qp" 'windmove-up)
+
+;; 折り返し動作をトグル
+(defun toggle-truncate-lines ()
+  (interactive)
+  (if truncate-lines
+		(setq truncate-lines nil)
+	(setq truncate-lines t))
+  (recenter))
+
+(global-set-key "\C-c\C-l" 'toggle-truncate-lines)
+
+;; C-x pでC-x oの逆の操作(前のウィンドウへ移動)
+(global-set-key "\C-xp" (lambda () (interactive)(other-window -1)))
+
+;; カラー設定
+(global-font-lock-mode t)
+
 ;; スクロールを１行ずつにする
 (setq scroll-conservatively 35
       scroll-margin 5
@@ -16,27 +137,46 @@ auto-mode-alist))
 ;; shell modeでもスクロールを1行ずつにする
 (setq comint-scroll-show-maximum-output t)
 
+;; C-v M-vでカーソル位置を固定する
+(setq scroll-preserve-screen-position t)
+
 ;; Tab幅を4にする
 (setq-default tab-width 4)
 (setq default-tab-width 4)
 (setq tab-stop-list '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60
 						64 68 72 76 80 84 88 92 96 100 104 108 112 116 120))
 
+;; インデントをTabの変わりにスペースにする
 (setq-default indent-tabs-mode nil)
 (setq indent-line-function 'indent-relative-maybe)
 
+;; C/C++共通設定
 (add-hook 'c-mode-common-hook
 		  '(lambda ()
 			 (c-set-style "GNU")
-			 (setq c-basic-offset 4)))
+			 (setq c-basic-offset 4)
+             ;; 演算式が複数行にまたがる時のオフセット
+             (c-set-offset 'statement-cont 'c-lineup-math)))
 
 ;; バックアップファイルを作成しない
 (setq make-backup-files nil)
-(setq auto-save-default nil)
+
+;; 自動保存を無効化
+;;(setq auto-save-default nil)
 
 ;; 行と列の表示
 (line-number-mode 1)
 (column-number-mode 1)
+
+;; 時計表示
+(setq display-time-string-forms
+      '((format "%s/%s(%s) %s:%s"
+                month day dayname
+                24-hours minutes
+                )))
+
+(display-time)
+(setq display-time-day-and-date t)
 
 ;; 対応する括弧を光らせる
 (show-paren-mode 1)
@@ -48,14 +188,17 @@ auto-mode-alist))
 (global-set-key "\C-z" 'undo)
 
 ;; 改行キーでオートインデント
-(global-set-key "\C-m" 'newline-and-indent)
-(global-set-key "\C-j" 'newline)
+;;(global-set-key "\C-m" 'newline-and-indent)
+;;(global-set-key "\C-j" 'newline)
 
 ;; Ctrl-hでバックスペース
 (global-set-key "\C-h" 'backward-delete-char)
 
 ;; Ctrl-kで改行までkill
 (setq kill-whole-line t)
+
+;; M-x compileをC-c cに割り当て
+(define-key mode-specific-map "c" 'compile)
 
 ;; Shell mode時上下でヒストリ補完
 (add-hook 'shell-mode-hook
@@ -68,19 +211,25 @@ auto-mode-alist))
           (function (lambda ()
                       (setq comint-buffer-maximum-size 3000)
                       (setq comint-output-filter-functions 'comint-truncate-buffer))))
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(gud-gdb-command-name "gdb --annotate=1")
- '(large-file-warning-threshold nil))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(font-lock-comment-face ((((class color) (min-colors 8) (background light)) (:foreground "red")))))
+
+;;(custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;; '(gud-gdb-command-name "gdb --annotate=1")
+;; '(large-file-warning-threshold nil))
+
+;;(custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;; '(font-lock-comment-face ((((class color) (min-colors 8) (background light)) (:foreground "red")))))
+
+(put 'downcase-region 'disabled nil)
+
+(put 'upcase-region 'disabled nil)
 
 ;; ruby-modeの設定
 (autoload 'ruby-mode "ruby-mode"
@@ -96,3 +245,29 @@ auto-mode-alist))
 (add-hook 'ruby-mode-hook
                     '(lambda ()
                                     (inf-ruby-keys)))
+
+;; カーソルを残したまま2画面に分割したバッファを入れ替える
+(defun swap-screen()
+  "Swap two screen,leaving cursor at current window."
+  (interactive)
+  (let ((thiswin (selected-window))
+        (nextbuf (window-buffer (next-window))))
+    (set-window-buffer (next-window) (window-buffer))
+    (set-window-buffer thiswin nextbuf)))
+
+;; カーソルと一緒に2画面に分割したバッファを入れ替える
+(defun swap-screen-with-cursor()
+  "Swap two screen,with cursor in same buffer."
+  (interactive)
+  (let ((thiswin (selected-window))
+        (thisbuf (window-buffer)))
+    (other-window 1)
+    (set-window-buffer thiswin (window-buffer))
+    (set-window-buffer (selected-window) thisbuf)))
+
+;; F2で画面を入れ替える
+(global-set-key [f2] 'swap-screen)
+
+;; Shift-F2でカーソルと一緒に画面を入れ替える
+(global-set-key [S-f2] 'swap-screen-with-cursor)
+
