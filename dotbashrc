@@ -3,8 +3,12 @@
 #
 export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
-export PATH=/opt/local/bin:/opt/local/sbin/:$PATH
-export MANPATH=/opt/local/man:$MANPATH
+#export PATH=/opt/local/bin:/opt/local/sbin/:$PATH
+#export MANPATH=/opt/local/man:$MANPATH
+
+## virtualenv setting(python)
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME=~/.virtualenvs
 
 ## subversion commit
 export SVN_EDITOR=emacs
