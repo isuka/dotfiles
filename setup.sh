@@ -11,6 +11,7 @@ fi
 cp dotbashrc ${HOME}/${DOTFILE_DIR}
 cp dotemacs ${HOME}/${DOTFILE_DIR}
 cp dotscreenrc ${HOME}/${DOTFILE_DIR}
+cp dottmux.conf ${HOME}/${DOTFILE_DIR}
 cp dotvimrc ${HOME}/${DOTFILE_DIR}
 cp dotzshrc ${HOME}/${DOTFILE_DIR}
 
@@ -39,5 +40,6 @@ function create_link()
 
 create_link bashrc
 create_link emacs
+create_link tmux.conf
 create_link vimrc
 create_link zshrc
