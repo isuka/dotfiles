@@ -7,8 +7,10 @@ export LSCOLORS=DxGxcxdxCxegedabagacad
 #export MANPATH=/opt/local/man:$MANPATH
 
 ## virtualenv setting(python)
-source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=~/.virtualenvs
+if [[ -e /usr/local/bin/virtualenvwrapper.sh ]]; then
+    source /usr/local/bin/virtualenvwrapper.sh
+    export WORKON_HOME=~/.virtualenvs
+fi
 
 ## subversion commit
 export SVN_EDITOR=emacs
@@ -23,6 +25,16 @@ export LESSOPEN='| /usr/local/bin/src-hilite-lesspipe.sh %s'
 alias ll='ls -l'
 alias dh='df -h'
 alias ssh='ssh -o "StrictHostKeyChecking no"'
+
+#
+# enviroment setting
+#
+
+## disable scroll lock
+if [[ -t 0 ]]; then
+    stty stop undef
+    stty start undef
+fi
 
 #
 # function setting
